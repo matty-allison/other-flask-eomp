@@ -134,7 +134,7 @@ def register():
 
 # route for adding new users
 @app.route('/add-product/', methods=["POST"])
-@jwt_required()
+# @jwt_required()
 def add_product():
     confirmation = {}
 
@@ -188,7 +188,7 @@ def show_Products():
 
 # route to view one product (product id required)
 @app.route('/view-product/<int:product_id>/', methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def view_product(product_id):
     confirmation = {}
 
@@ -205,7 +205,7 @@ def view_product(product_id):
 
 # route to edit a product (product id required)
 @app.route('/edit-product/<int:product_id>/', methods=["PUT"])
-@jwt_required()
+# @jwt_required()
 def edit_product(product_id):
     confirmation = {}
 
@@ -248,7 +248,7 @@ def edit_product(product_id):
 
 # route to delete a product (product id required)
 @app.route('/delete-product/<int:product_id>/')
-@jwt_required()
+# @jwt_required()
 def delete_product(product_id):
     confirmation = {}
 
