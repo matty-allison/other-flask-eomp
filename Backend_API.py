@@ -233,7 +233,7 @@ def edit_product(product_id):
             product_name = request.json['product_name']
             product_description = request.json['product_description']
             product_price = request.json['product_price']
-            product_image = request.files['product_image']
+            product_image = request.json['product_image']
             put_data = {}
 
             if product_name is not None:
