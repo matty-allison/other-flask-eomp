@@ -5,6 +5,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt import JWT, jwt_required, current_identity
 from flask_mail import Mail, Message
+import cloudinary
+import cloudinary.uploader
 
 # Creating a users class
 class Users(object):
@@ -36,7 +38,8 @@ def addProduct():
                      "product_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                      "product_name TEXT NOT NULL,"
                      "product_description TEXT NOT NULL,"
-                     "product_price TEXT NOT NULL)")
+                     "product_price TEXT NOT NULL,"
+                     "product_image TEXT NOT NULL)")
     print("products table created")
 
 
@@ -44,6 +47,21 @@ def addProduct():
 addAccount()
 addProduct()
 
+# function to take image uploads and convert them into urls
+def image_convert():
+    app.logger.info('in upload route')
+    cloudinary.config(cloud_name="dbhj6nbj9",
+                      api_key="533486918376564",
+                      api_secret="NMOQ39T4DW4lJnNmlhf12oNopnw"
+                      )
+    upload_result = None
+    if request.method == 'POST' or request.method == 'PUT':
+        product_image = request.files['product_image']
+        app.logger.info('%s file_to_upload', product_image)
+        if product_image:
+            upload_result = cloudinary.uploader.upload(product_image)
+            app.logger.info(upload_result)
+            return upload_result['url']
 
 # fetching the users from the table
 def get_user():
@@ -149,7 +167,8 @@ def add_product():
             cursor.execute("INSERT INTO products("
                            "product_name,"
                            "product_description,"
-                           "product_price) VALUES (?, ?, ?)", (product_name, product_description, product_price))
+                           "product_price,"
+                           "product_image) VALUES (?, ?, ?, ?)", (product_name, product_description, product_price, image_convert()))
             conn.commit()
             confirmation["message"] = "Product add successfully"
             confirmation["status_code"] = 200
@@ -214,6 +233,7 @@ def edit_product(product_id):
             product_name = request.json['product_name']
             product_description = request.json['product_description']
             product_price = request.json['product_price']
+            product_image = request.files['product_image']
             put_data = {}
 
             if product_name is not None:
@@ -231,7 +251,7 @@ def edit_product(product_id):
                 cursor.execute("UPDATE products SET product_description=? WHERE product_id=?", (put_data["product_description"], product_id))
                 conn.commit()
 
-                confirmation["m("")essage"] = "Product description changed successfully"
+                confirmation["message"] = "Product description changed successfully"
                 confirmation["status_code"] = 200
 
             if product_price is not None:
@@ -243,6 +263,14 @@ def edit_product(product_id):
                 confirmation["message"] = "Product price updated successfully"
                 confirmation["status_code"] = 200
 
+            if product_image is not None:
+                put_data["product_image"] = image_convert()
+                cursor = conn.cursor()
+                cursor.execute("UPDATE products SET product_image=? WHERE product_id=?", (put_data["product_image"], product_id))
+                conn.commit()
+
+                confirmation["message"] = "Product image changed successfully"
+                confirmation["status_code"] = 200
     return confirmation
 
 
