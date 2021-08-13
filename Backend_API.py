@@ -211,9 +211,9 @@ def edit_product(product_id):
 
     if request.method == "PUT":
         with sqlite3.connect('sales.db') as conn:
-            product_name = request.form['product_name']
-            product_description = request.form['product_description']
-            product_price = request.form['product_price']
+            product_name = request.json['product_name']
+            product_description = request.json['product_description']
+            product_price = request.json['product_price']
             put_data = {}
 
             if product_name is not None:
