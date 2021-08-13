@@ -140,9 +140,9 @@ def add_product():
 
     if request.method == "POST":
 
-        product_name = request.form['product_name']
-        product_description = request.form['product_description']
-        product_price = request.form['product_price']
+        product_name = request.json['product_name']
+        product_description = request.json['product_description']
+        product_price = request.json['product_price']
 
         with sqlite3.connect("sales.db") as conn:
             cursor = conn.cursor()
